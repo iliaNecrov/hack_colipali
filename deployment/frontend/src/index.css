@@ -1,0 +1,30 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  color-scheme: dark light;
+}
+
+button {
+  all: unset;
+  cursor: pointer;
+}
+
+@font-face {
+  font-family: 'Gotham Pro';
+  src: url('@/assets/fonts/gothampro_bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gotham Pro';
+  src: url('@/assets/fonts/gothampro_medium.ttf') format('truetype');
+  font-weight: 500; /* Medium */
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Gotham Pro';
+  src: url('@/assets/fonts/gothampro_light.ttf') format('truetype');
+  font-weight: 300; /* Light */
+  font-style: normal;
+}
