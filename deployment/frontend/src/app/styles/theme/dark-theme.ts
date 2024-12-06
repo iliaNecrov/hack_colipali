@@ -47,8 +47,8 @@ const chartColors = {
 };
 
 export const darkColorsTheme = {
-  primary: '#339CFD',
-  primary1: '#7568f6',
+  primary: '#02040a',
+  primary1: '#0e1117',
   primaryGradient: 'linear-gradient(211.49deg, #dc88f5 15.89%, #339CFD 48.97%)',
   light: '#696969',
   active: '#F5F5F5',
