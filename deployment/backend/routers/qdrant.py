@@ -1,3 +1,5 @@
+import io
+import base64
 import pickle
 
 from fastapi import APIRouter
@@ -12,6 +14,9 @@ from common.parser import pdf_bytes_to_pages
 router = APIRouter()
 
 
+PATH_TO_PAGES = "pages/pages.pkl"
+
+
 @router.post("/upload")
 async def upload_document(files: List[UploadFile]):
     # get pages from uploaded files
@@ -23,7 +28,7 @@ async def upload_document(files: List[UploadFile]):
         pages.extend(pdf_bytes_to_pages(pdf_bytes, file.filename))
 
     # save images to volume with pickle
-    pickle.dump(obj=pages, file=open("pages/pages.pkl", "wb"))
+    pickle.dump(obj=pages, file=open(PATH_TO_PAGES, "wb"))
 
     # compute embeddings from pages
     # ...
@@ -36,4 +41,25 @@ async def upload_document(files: List[UploadFile]):
 
 @router.post("/search")
 async def search(query: str) -> str:
-    pass
+    pages = pickle.load(open(PATH_TO_PAGES, "rb"))
+
+    outputs = []
+    for page in pages:
+        img_bytes = io.BytesIO()
+        page["image"].save(img_bytes, format="PNG")
+        img_bytes.seek(0)
+
+        # Convert image to base64
+        img_base64 = base64.b64encode(img_bytes.getvalue()).decode("utf-8")
+        img_page = page["page"]
+        img_name = page["name"]
+        img_text = page["text"]
+        
+        outputs.append({
+            "page": img_page,
+            "text": img_text,
+            "name": img_name,
+            "img": img_base64, 
+        })
+
+    return {"images": outputs}
