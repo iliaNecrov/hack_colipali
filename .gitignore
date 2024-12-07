@@ -80,6 +80,9 @@ target/
 *.ipynb
 *.pdf
 *.zip
+*.pkl
+
+qdrant_data/
 
 # IPython
 profile_default/
