@@ -16,7 +16,7 @@ export const uploadFileApi = async (
 
   file.append('file', data as Blob);
   return (
-    await axios.post(`${api}/file/up/`, file, {
+    await axios.post(`${api}/file`, file, {
       headers: {
         'Content-Type': 'multipart/form-data;charset=utf-8',
       },
