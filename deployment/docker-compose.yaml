@@ -22,7 +22,7 @@ services:
               capabilities: [ gpu ]
     volumes:
       - ./backend/pages:/pages
-      - ./backend/transformers_cache:/backend/transformers_cache
+      - ./backend/transformers_cache:/transformers_cache
     networks:
         - app-network
 
