@@ -14,5 +14,5 @@ uvicorn==0.32.1
 pymupdf==1.25.0
 pillow==10.2.0
 python-multipart==0.0.9
-qdrant-client==0.1.0
+qdrant-client==1.12.1
 colpali-engine==0.3.4
