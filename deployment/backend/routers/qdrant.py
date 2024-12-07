@@ -10,6 +10,7 @@ from typing import List, Dict
 
 from common.parser import pdf_bytes_to_pages
 from common.search_engine import SearchEngine
+from pydantic import BaseModel
 
 router = APIRouter()
 
@@ -42,9 +43,11 @@ async def upload_document(files: List[UploadFile]):
 
     return "OK!"
 
+class SearchRequest(BaseModel):
+    query: str
 
 @router.post("/search")
-async def search(query: str):
+async def search(query: SearchRequest):
     global search_engine
 
     pages = search_engine.query(query)
