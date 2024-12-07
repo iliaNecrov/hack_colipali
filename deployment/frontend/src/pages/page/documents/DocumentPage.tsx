@@ -103,6 +103,8 @@ const BobyWrapper = styled.div`
   align-items: center;
   justify-content: center;
   width: 100%;
+  height: 500px;
+  overflow-y: visible;
 `;
 const ImageContainer = styled.div`
   width: 60%;

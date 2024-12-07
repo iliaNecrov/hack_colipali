@@ -11,6 +11,7 @@ export const ImageWrapper = ({ elem }: IImageWrapper): ReactElement => {
     <Wrapper>
       <StyledImage src={`data:image/png;base64,${elem?.img}`} alt="Image" />;
       <Text>{elem.text}</Text>
+      {elem.page}
     </Wrapper>
   );
 };
