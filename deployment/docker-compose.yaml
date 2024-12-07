@@ -47,6 +47,9 @@ services:
       - 6333
     volumes:
       - ./backend/qdrant_data:/qdrant/storage
+    networks:
+      - app-network
+
 
 
 networks:
