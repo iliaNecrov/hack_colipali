@@ -5,6 +5,9 @@ from peft import LoraConfig
 from transformers.models.qwen2_vl import Qwen2VLProcessor
 import torch
 
+from huggingface_hub import login
+login(token="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")
+
 from common.model.qwen import ColQwen2ForRAG
 
 model_name = "vidore/colqwen2-v1.0"
