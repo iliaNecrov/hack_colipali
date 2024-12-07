@@ -5,10 +5,12 @@ import { IImage } from '@/pages/page/documents/DocumentPage.tsx';
 interface IImageWrapper {
   elem: IImage;
 }
+
 export const ImageWrapper = ({ elem }: IImageWrapper): ReactElement => {
   return (
     <Wrapper>
-      <StyledImage src={`data:image/png;base64,${elem.img}`} alt="Image" />;<Text>{elem.text}</Text>
+      <StyledImage src={`data:image/png;base64,${elem?.img}`} alt="Image" />;
+      <Text>{elem.text}</Text>
     </Wrapper>
   );
 };

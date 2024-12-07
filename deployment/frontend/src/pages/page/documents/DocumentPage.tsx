@@ -62,7 +62,7 @@ export const DocumentPage = (): ReactElement => {
             <Button onClick={onButtonClick}>Отправить</Button>
           </SubHeaderWrapper>
           {images.map((elem, index) => (
-            <ImageWrapper key={index} elem={elem} base64={elem.img} alt="Image" />
+            <ImageWrapper key={index} elem={elem} />
           ))}
         </Wrapper>
       </Container>
