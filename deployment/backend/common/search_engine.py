@@ -27,7 +27,7 @@ def scale_image(image: Image.Image, new_height: int = 1024) -> Image.Image:
 class VectorDbEngine:
     """Engine to manage vector database interactions with Qdrant."""
 
-    qdrant_client = QdrantClient(url="http://localhost:6333/")
+    qdrant_client = QdrantClient(url="http://qdrant:6333/")
 
     def __init__(self, data: List[Dict[str, Any]], collection_name: str):
         """
