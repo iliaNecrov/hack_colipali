@@ -57,8 +57,6 @@ export const DocumentPage = (): ReactElement => {
     setText(response);
   };
 
-  console.log('value', inputValue);
-
   const onButtonClick = () => {
     void fetchData(inputValue, true);
     void fetchGenerate(inputValue);
