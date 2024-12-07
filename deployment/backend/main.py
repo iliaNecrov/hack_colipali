@@ -1,7 +1,5 @@
 import os
-
 os.environ['TRANSFORMERS_CACHE'] = "transformers_cache"
-os.environ['TRANSFORMERS_OFFLINE'] = "1"
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
