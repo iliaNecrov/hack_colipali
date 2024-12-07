@@ -75,7 +75,7 @@ async def search(query: SearchRequest):
 
 
 @router.post("/generate")
-async def generate(query: str) -> str:
+async def generate(query: SearchRequest) -> str:
     global search_engine
 
     return search_engine.get_answer(query)
