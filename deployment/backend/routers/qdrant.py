@@ -50,7 +50,7 @@ class SearchRequest(BaseModel):
 async def search(query: SearchRequest):
     global search_engine
 
-    pages = search_engine.query(query)
+    pages = search_engine.query(query.query)
 
     outputs = []
     for page in pages:
@@ -78,6 +78,6 @@ async def search(query: SearchRequest):
 async def generate(query: SearchRequest) -> str:
     global search_engine
 
-    return search_engine.get_answer(query)
+    return search_engine.get_answer(query.query)
 
 
