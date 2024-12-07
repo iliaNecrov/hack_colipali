@@ -34,7 +34,7 @@ services:
     expose:
       - 6333
     volumes:
-      - ./qdrant_data:/qdrant/storage
+      - ./backend/qdrant_data:/qdrant/storage
 
 
 networks:
