@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from common.config import logger
-from routers import qdrant, image
+from routers import qdrant
 
 app = FastAPI(title="api",  version="1.0.0")
 
