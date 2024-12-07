@@ -1,10 +1,12 @@
-import uvicorn
-from fastapi import FastAPI, Body
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from common.config import logger
+from routers import qdrant
 
 app = FastAPI(title="api")
+
+app.include_router(qdrant.router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -19,15 +21,5 @@ def root():
     logger.info("test")
     return {"test": "success"}
 
-temp_data = ["Some Data"]
-@app.post("/test-post")
-def test(data: str = Body(...)):
-    temp_data.append(data)
-    return {"data": temp_data}
 
-# if __name__ == "__main__":
-#     port = 8000
-#     workers = 1
-#     host = "0.0.0.0"
-#     logger.info(f"port: {port}, host: {host}, workers: {workers}")
-#     uvicorn.run("main:app", host=host, port=port, workers=workers)
+
