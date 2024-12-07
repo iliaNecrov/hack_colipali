@@ -19,6 +19,7 @@ export const DocumentPage = (): ReactElement => {
   const [messageApi, contextHolder] = message.useMessage();
   const [images, setImages] = useState<IImage[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
+  const [text, setText] = useState<string>('');
   const fetchData = useCallback(
     async (value: string, isMounted?: boolean, url = `${api}/search`): Promise<void> => {
       try {
@@ -42,10 +43,25 @@ export const DocumentPage = (): ReactElement => {
     },
     [],
   );
+  const fetchGenerate = async (value: string) => {
+    const response: string = (
+      await axios.post(
+        `${api}/generate`,
+        { query: value },
+        {
+          headers: { 'Content-Type': 'application/json' },
+        },
+      )
+    ).data;
+
+    setText(response);
+  };
+
   console.log('value', inputValue);
 
   const onButtonClick = () => {
     void fetchData(inputValue, true);
+    void fetchGenerate(inputValue);
   };
   return (
     <>
@@ -60,11 +76,17 @@ export const DocumentPage = (): ReactElement => {
               value={inputValue}
               placeholder={'Введите промпт'}
             />
+
             <Button onClick={onButtonClick}>Отправить</Button>
           </SubHeaderWrapper>
-          {images.map((elem, index) => (
-            <ImageWrapper key={index} elem={elem} />
-          ))}
+          <BobyWrapper>
+            <ImageContainer>
+              {images.map((elem, index) => (
+                <ImageWrapper key={index} elem={elem} />
+              ))}
+            </ImageContainer>
+            <TextContainer>{text}</TextContainer>
+          </BobyWrapper>
         </Wrapper>
       </Container>
     </>
@@ -73,6 +95,24 @@ export const DocumentPage = (): ReactElement => {
 const StyledButton = styled(Button)`
   background-color: var(--secondary-background-color);
   color: var(--primary-color);
+`;
+
+const BobyWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 500px;
+  overflow-y: visible;
+`;
+const ImageContainer = styled.div`
+  width: 60%;
+`;
+const TextContainer = styled.div`
+  align-items: center;
+  justify-content: center;
+  width: 30%;
 `;
 
 const SubHeaderWrapper = styled.div`
