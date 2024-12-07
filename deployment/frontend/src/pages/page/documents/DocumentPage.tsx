@@ -1,25 +1,23 @@
 import React, { type ReactElement, useCallback, useEffect, useState } from 'react';
 import { PageTitle } from '@/features/page-title/PageTitle.tsx';
-import { DocumentsMenu } from '@/widgets/document-page/DocumentsMenu.tsx';
 import styled from 'styled-components';
-import {
-  DocumentTypeSelect,
-  IChooseFileType,
-} from '@/widgets/document-type/DocumentTypeSelect.tsx';
-import { IDocumentObject, IImagesResponse } from '@/shared/interfaces/document.interface.ts';
+import { IImagesResponse } from '@/shared/interfaces/document.interface.ts';
 import axios from 'axios';
 import { Button, message } from 'antd';
 import { api } from '@/path.ts';
+import { BaseInput } from '@/features/input/BaseInput.tsx';
+import { ImageWrapper } from '@/features/images/ImageWrapper.tsx';
 
 export const DocumentPage = (): ReactElement => {
   const [messageApi, contextHolder] = message.useMessage();
   const [images, setImages] = useState<string[]>([]);
+  const [inputValue, setInputValue] = useState<string>('');
   const fetchData = useCallback(
     async (isMounted?: boolean, url = `${api}/images`): Promise<void> => {
       try {
         const response: IImagesResponse = (await axios.get(url)).data;
         if (isMounted) {
-          const images = response?.images;
+          const images = response.images;
           setImages(images);
         }
       } catch (e) {
@@ -28,6 +26,7 @@ export const DocumentPage = (): ReactElement => {
     },
     [],
   );
+  console.log('value', inputValue);
   useEffect(() => {
     let isMounted = true;
     void fetchData(isMounted);
@@ -42,8 +41,16 @@ export const DocumentPage = (): ReactElement => {
       <Container>
         <Wrapper>
           <Title>Ваши документы</Title>
+          <SubHeaderWrapper>
+            <BaseInput
+              onChange={e => setInputValue(e.target.value)}
+              value={inputValue}
+              placeholder={'Введите промпт'}
+            />
+            <Button>Отправить</Button>
+          </SubHeaderWrapper>
           {images.map((imgBase64, index) => (
-            <img key={index} src={`data:image/png;base64,${imgBase64}`} alt="Image" />
+            <ImageWrapper key={index} base64={imgBase64} alt="Image" />
           ))}
         </Wrapper>
       </Container>
@@ -60,6 +67,7 @@ const SubHeaderWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  column-gap: 40px;
 `;
 
 const FilterContainer = styled.div`

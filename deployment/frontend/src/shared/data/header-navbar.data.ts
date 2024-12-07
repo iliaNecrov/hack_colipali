@@ -16,14 +16,8 @@ export const headerNavBarData: IHeaderNavbarData[] = [
   },
   {
     id: 2,
-    text: 'Документы',
+    text: 'Файлы',
     url: DOCUMENTS,
-    isActive: false,
-  },
-  {
-    id: 3,
-    text: 'Редактор',
-    url: EDITOR,
     isActive: false,
   },
 ];
