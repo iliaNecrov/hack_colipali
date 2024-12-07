@@ -103,16 +103,6 @@ const DraggerStyled = styled(Dragger)`
     color: var(--primary-color1) !important;
   }
   color: var(--text-main-color) !important;
-  &.upload-list-item {
-    padding: 10px;
-    border: 1px solid red; /* Цвет рамки по умолчанию */
-    border-radius: 4px;
-    margin-bottom: 8px;
-  }
-  &.upload-list-item.done {
-    background-color: #d9f7be !important; /* Цвет фона для успешно загруженных файлов */
-    border-color: #b7eb8f; /* Цвет рамки для успешно загруженных файлов */
-  }
 `;
 
 const Icon = styled(InboxOutlined)`

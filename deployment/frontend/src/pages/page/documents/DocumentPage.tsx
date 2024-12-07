@@ -1,4 +1,4 @@
-import React, { type ReactElement, useState } from 'react';
+import React, { type ReactElement, useCallback, useEffect, useState } from 'react';
 import { PageTitle } from '@/features/page-title/PageTitle.tsx';
 import { DocumentsMenu } from '@/widgets/document-page/DocumentsMenu.tsx';
 import styled from 'styled-components';
@@ -6,24 +6,35 @@ import {
   DocumentTypeSelect,
   IChooseFileType,
 } from '@/widgets/document-type/DocumentTypeSelect.tsx';
-import { IDocumentObject } from '@/shared/interfaces/document.interface.ts';
+import { IDocumentObject, IImagesResponse } from '@/shared/interfaces/document.interface.ts';
 import axios from 'axios';
 import { Button, message } from 'antd';
 import { api } from '@/path.ts';
 
 export const DocumentPage = (): ReactElement => {
   const [messageApi, contextHolder] = message.useMessage();
-  const [documents, setDocument] = useState<IDocumentObject[]>([]);
-  const fetchData = async (isMounted?: boolean, url = `${api}/documents`): Promise<void> => {
-    try {
-      const response: IDocumentObject[] = (await axios.get(url)).data;
-      if (isMounted) {
-        setDocument(response);
+  const [images, setImages] = useState<string[]>([]);
+  const fetchData = useCallback(
+    async (isMounted?: boolean, url = `${api}/images`): Promise<void> => {
+      try {
+        const response: IImagesResponse = (await axios.get(url)).data;
+        if (isMounted) {
+          const images = response?.images;
+          setImages(images);
+        }
+      } catch (e) {
+        messageApi.error(`Ошибка загрузки: ${e}`);
       }
-    } catch (e) {
-      messageApi.error(`Ошибка загрузки: ${e}`);
-    }
-  };
+    },
+    [],
+  );
+  useEffect(() => {
+    let isMounted = true;
+    void fetchData(isMounted);
+    return (): void => {
+      isMounted = false;
+    };
+  }, [fetchData]);
   return (
     <>
       {contextHolder}
@@ -31,7 +42,9 @@ export const DocumentPage = (): ReactElement => {
       <Container>
         <Wrapper>
           <Title>Ваши документы</Title>
-          <DocumentsMenu fetchData={fetchData} documents={documents} />
+          {images.map((imgBase64, index) => (
+            <img key={index} src={`data:image/png;base64,${imgBase64}`} alt="Image" />
+          ))}
         </Wrapper>
       </Container>
     </>

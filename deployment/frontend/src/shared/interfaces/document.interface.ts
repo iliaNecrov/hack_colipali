@@ -23,3 +23,7 @@ export interface IDocumentObject {
   type: IType;
   entities: IEntity[];
 }
+
+export interface IImagesResponse {
+  images: string[];
+}
