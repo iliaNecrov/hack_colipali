@@ -4,6 +4,8 @@ import { message, Upload, type UploadProps } from 'antd';
 import { InboxOutlined } from '@ant-design/icons';
 import { uploadFileApi } from '@/shared/api/upload.api.ts';
 import styled from 'styled-components';
+import {useNavigate} from "react-router-dom";
+import {DOCUMENTS} from "@/shared/constants/paths.ts";
 
 const { Dragger } = Upload;
 
@@ -18,6 +20,7 @@ export interface IFileWithInfoResponse {
 interface IUploadFileModal {}
 export const UploadFile = ({}: IUploadFileModal): ReactElement => {
   const [messageApi, contextHolder] = message.useMessage();
+  const navigate = useNavigate();
   const validFileUpload = (fileType: string): boolean => {
     return fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
   };
@@ -26,7 +29,7 @@ export const UploadFile = ({}: IUploadFileModal): ReactElement => {
     name: 'file',
     multiple: true,
     beforeUpload: (file: RcFile): boolean => {
-      const isValid = validFileUpload(file?.type);
+      const isValid = true;
       if (!isValid) {
         void messageApi.error(`${file.name} is not a valid file`);
       }
@@ -56,6 +59,7 @@ export const UploadFile = ({}: IUploadFileModal): ReactElement => {
             'Перейдите на другую страницу для генерации презентации',
           10,
         );
+        navigate(DOCUMENTS);
       } catch (e) {
         onError?.(e as ProgressEvent);
         messageApi.error('При загрузке файла произошла ошибка');
