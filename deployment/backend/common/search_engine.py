@@ -12,7 +12,7 @@ import stamina
 class VectorDbEngine:
     """Engine to manage vector database interactions with Qdrant."""
 
-    qdrant_client = QdrantClient(url="http://localhost:6333/")
+    qdrant_client = QdrantClient(url="http://qdrant:6333/")
 
     def __init__(self, data: List[Dict[str, Any]], colpali_model, colpali_processor, collection_name: str):
         """
