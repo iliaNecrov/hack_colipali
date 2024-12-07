@@ -43,7 +43,7 @@ export const DocumentPage = (): ReactElement => {
     },
     [],
   );
-  const fetchGenerate = (value: string) => {
+  const fetchGenerate = async (value: string) => {
     const response: string = (
       await axios.post(
         `${api}/generate`,
@@ -76,6 +76,7 @@ export const DocumentPage = (): ReactElement => {
               value={inputValue}
               placeholder={'Введите промпт'}
             />
+
             <Button onClick={onButtonClick}>Отправить</Button>
           </SubHeaderWrapper>
           <BobyWrapper>
