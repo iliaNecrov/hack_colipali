@@ -9,16 +9,20 @@ from fastapi.responses import FileResponse
 from typing import List, Dict
 
 from common.parser import pdf_bytes_to_pages
-
+from common.search_engine import SearchEngine
 
 router = APIRouter()
 
 
 PATH_TO_PAGES = "pages/pages.pkl"
 
+search_engine = None
+
 
 @router.post("/upload")
 async def upload_document(files: List[UploadFile]):
+    global search_engine
+
     # get pages from uploaded files
     pages: List[Dict] = []
 
@@ -28,10 +32,10 @@ async def upload_document(files: List[UploadFile]):
         pages.extend(pdf_bytes_to_pages(pdf_bytes, file.filename))
 
     # save images to volume with pickle
-    pickle.dump(obj=pages, file=open(PATH_TO_PAGES, "wb"))
+    # pickle.dump(obj=pages, file=open(PATH_TO_PAGES, "wb"))
 
     # compute embeddings from pages
-    # ...
+    search_engine = SearchEngine(pages, "documents")
 
     # upload embeddings and payloads to Qdrant
     # ...
@@ -40,8 +44,10 @@ async def upload_document(files: List[UploadFile]):
 
 
 @router.post("/search")
-async def search(query: str) -> str:
-    pages = pickle.load(open(PATH_TO_PAGES, "rb"))
+async def search(query: str):
+    global search_engine
+
+    pages = search_engine.query(query)
 
     outputs = []
     for page in pages:
@@ -63,3 +69,12 @@ async def search(query: str) -> str:
         })
 
     return {"images": outputs}
+
+
+@router.post("/generate")
+async def generate(query: str) -> str:
+    global search_engine
+
+    return search_engine.get_answer(query)
+
+
