@@ -79,14 +79,14 @@ export const DocumentPage = (): ReactElement => {
 
             <Button onClick={onButtonClick}>Отправить</Button>
           </SubHeaderWrapper>
-          <BobyWrapper>
+          <BodyWrapper>
             <ImageContainer>
               {images.map((elem, index) => (
                 <ImageWrapper key={index} elem={elem} />
               ))}
             </ImageContainer>
             <TextContainer>{text}</TextContainer>
-          </BobyWrapper>
+          </BodyWrapper>
         </Wrapper>
       </Container>
     </>
@@ -97,17 +97,18 @@ const StyledButton = styled(Button)`
   color: var(--primary-color);
 `;
 
-const BobyWrapper = styled.div`
+const BodyWrapper = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
   width: 100%;
+  overflow-y: scroll;
   height: 500px;
-  overflow-y: visible;
 `;
 const ImageContainer = styled.div`
   width: 60%;
+  height: 500px;
 `;
 const TextContainer = styled.div`
   align-items: center;
