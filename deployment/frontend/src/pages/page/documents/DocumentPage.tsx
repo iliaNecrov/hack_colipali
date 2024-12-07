@@ -31,6 +31,7 @@ export const DocumentPage = (): ReactElement => {
             },
           )
         ).data;
+
         if (isMounted) {
           const images = response.images;
           setImages(images);
