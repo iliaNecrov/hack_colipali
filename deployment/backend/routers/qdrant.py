@@ -9,7 +9,7 @@ from fastapi.responses import FileResponse
 from typing import List, Dict
 
 from common.parser import pdf_bytes_to_pages
-
+from pydantic import BaseModel
 
 router = APIRouter()
 
@@ -38,11 +38,11 @@ async def upload_document(files: List[UploadFile]):
 
     return "OK!"
 
-
+class SearchRequest(BaseModel):
+    query: str
 @router.post("/search")
-async def search(query: str) -> str:
+async def search(query: SearchRequest):
     pages = pickle.load(open(PATH_TO_PAGES, "rb"))
-
     outputs = []
     for page in pages:
         img_bytes = io.BytesIO()
@@ -54,12 +54,12 @@ async def search(query: str) -> str:
         img_page = page["page"]
         img_name = page["name"]
         img_text = page["text"]
-        
+
         outputs.append({
             "page": img_page,
             "text": img_text,
             "name": img_name,
-            "img": img_base64, 
+            "img": img_base64,
         })
 
     return {"images": outputs}

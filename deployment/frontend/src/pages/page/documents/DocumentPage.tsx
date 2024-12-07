@@ -8,14 +8,29 @@ import { api } from '@/path.ts';
 import { BaseInput } from '@/features/input/BaseInput.tsx';
 import { ImageWrapper } from '@/features/images/ImageWrapper.tsx';
 
+export interface IImage {
+  page: number;
+  text: string;
+  name: string;
+  img: string;
+}
+
 export const DocumentPage = (): ReactElement => {
   const [messageApi, contextHolder] = message.useMessage();
-  const [images, setImages] = useState<string[]>([]);
+  const [images, setImages] = useState<IImage[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const fetchData = useCallback(
-    async (isMounted?: boolean, url = `${api}/images`): Promise<void> => {
+    async (value: string, isMounted?: boolean, url = `${api}/search`): Promise<void> => {
       try {
-        const response: IImagesResponse = (await axios.get(url)).data;
+        const response: IImagesResponse = (
+          await axios.post(
+            url,
+            { query: value },
+            {
+              headers: { 'Content-Type': 'application/json' },
+            },
+          )
+        ).data;
         if (isMounted) {
           const images = response.images;
           setImages(images);
@@ -27,13 +42,10 @@ export const DocumentPage = (): ReactElement => {
     [],
   );
   console.log('value', inputValue);
-  useEffect(() => {
-    let isMounted = true;
-    void fetchData(isMounted);
-    return (): void => {
-      isMounted = false;
-    };
-  }, [fetchData]);
+
+  const onButtonClick = () => {
+    void fetchData(inputValue, true);
+  };
   return (
     <>
       {contextHolder}
@@ -47,10 +59,10 @@ export const DocumentPage = (): ReactElement => {
               value={inputValue}
               placeholder={'Введите промпт'}
             />
-            <Button>Отправить</Button>
+            <Button onClick={onButtonClick}>Отправить</Button>
           </SubHeaderWrapper>
-          {images.map((imgBase64, index) => (
-            <ImageWrapper key={index} base64={imgBase64} alt="Image" />
+          {images.map((elem, index) => (
+            <ImageWrapper key={index} elem={elem} base64={elem.img} alt="Image" />
           ))}
         </Wrapper>
       </Container>
