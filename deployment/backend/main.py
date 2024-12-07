@@ -1,3 +1,4 @@
+import uvicorn
 from fastapi import FastAPI, Body
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -31,3 +32,9 @@ def test(data: str = Body(...)):
     return {"data": temp_data}
 
 
+if __name__ == "__main__":
+    port = 8000
+    workers = 1
+    host = "0.0.0.0"
+    logger.info(f"port: {port}, host: {host}, workers: {workers}")
+    uvicorn.run("main:app", host=host, port=port, workers=workers)

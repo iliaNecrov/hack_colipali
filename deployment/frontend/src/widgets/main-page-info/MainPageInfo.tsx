@@ -3,7 +3,7 @@ import { Button, message } from 'antd';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { DocumentTypeSelect } from '@/widgets/document-type/DocumentTypeSelect.tsx';
-import { UploadFile } from '@/features/upload-file/UploadFile.tsx';
+import { UploadFileComponent } from '@/features/upload-file/UploadFileComponent.tsx';
 
 export const MainPageInfo = (): ReactElement => {
   const [loading, setLoading] = useState(false);
@@ -26,7 +26,7 @@ export const MainPageInfo = (): ReactElement => {
             <Description>Загрузите файл</Description>
           </TextContainer>
           <SearchContainer>
-            <UploadFile />
+            <UploadFileComponent />
           </SearchContainer>
         </MainContainer>
       </Wrapper>

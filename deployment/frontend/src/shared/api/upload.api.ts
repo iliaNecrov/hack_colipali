@@ -1,7 +1,7 @@
 import type { RcFile } from 'antd/lib/upload';
 import { translit } from '@/shared/utils/utils.ts';
 import axios from 'axios';
-import { IFileWithInfoResponse } from '@/features/upload-file/UploadFile.tsx';
+import { IFileWithInfoResponse } from '@/features/upload-file/UploadFileComponent.tsx';
 import { api } from '@/path.ts';
 
 export const uploadFileApi = async (
