@@ -12,7 +12,6 @@ import { Button, message } from 'antd';
 import { api } from '@/path.ts';
 
 export const DocumentPage = (): ReactElement => {
-  const [chooseFileType, setChooseFileType] = useState<IChooseFileType>({ value: 'Выберете тип' });
   const [messageApi, contextHolder] = message.useMessage();
   const [documents, setDocument] = useState<IDocumentObject[]>([]);
   const fetchData = async (isMounted?: boolean, url = `${api}/documents`): Promise<void> => {
@@ -25,9 +24,6 @@ export const DocumentPage = (): ReactElement => {
       messageApi.error(`Ошибка загрузки: ${e}`);
     }
   };
-  const onSelect = (v: IChooseFileType) => {
-    void fetchData(true, `${api}/documents`);
-  };
   return (
     <>
       {contextHolder}
@@ -35,17 +31,6 @@ export const DocumentPage = (): ReactElement => {
       <Container>
         <Wrapper>
           <Title>Ваши документы</Title>
-          <SubHeaderWrapper>
-            <FilterContainer>
-              <DocumentTypeSelect
-                chooseFileType={chooseFileType}
-                setChooseFileType={setChooseFileType}
-                placeholder={'Выберете тип'}
-                onCustomSelect={onSelect}
-              />
-            </FilterContainer>
-            <StyledButton>Загрузить</StyledButton>
-          </SubHeaderWrapper>
           <DocumentsMenu fetchData={fetchData} documents={documents} />
         </Wrapper>
       </Container>
