@@ -1,3 +1,5 @@
+import { IImage } from '@/pages/page/documents/DocumentPage.tsx';
+
 export interface IEntity {
   value: string;
   label: string;
@@ -22,4 +24,8 @@ export interface IDocumentObject {
   info: IInfo;
   type: IType;
   entities: IEntity[];
+}
+
+export interface IImagesResponse {
+  images: IImage[];
 }

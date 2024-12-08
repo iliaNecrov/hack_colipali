@@ -5,8 +5,23 @@ from qdrant_client.http import models
 from tqdm import tqdm
 from datasets import Dataset
 from typing import List, Dict, Any
-from colpali_engine.models import ColPali, ColPaliProcessor
 import stamina
+from PIL import Image
+
+from common.model import processor_retrieval, processor_generation, model
+
+
+def scale_image(image: Image.Image, new_height: int = 1024) -> Image.Image:
+    """
+    Scale an image to a new height while maintaining the aspect ratio.
+    """
+    width, height = image.size
+    aspect_ratio = width / height
+    new_width = int(new_height * aspect_ratio)
+
+    scaled_image = image.resize((new_width, new_height))
+
+    return scaled_image
 
 
 class VectorDbEngine:
@@ -14,23 +29,22 @@ class VectorDbEngine:
 
     qdrant_client = QdrantClient(url="http://qdrant:6333/")
 
-    def __init__(self, data: List[Dict[str, Any]], colpali_model, colpali_processor, collection_name: str):
+    def __init__(self, data: List[Dict[str, Any]], collection_name: str):
         """
         Initialize the vector database engine.
 
         Args:
             data: List of data entries to be indexed.
-            colpali_model: Model for generating image embeddings.
-            colpali_processor: Processor for handling image data.
             collection_name: Name of the Qdrant collection.
         """
         self.dataset = Dataset.from_list(data)
-        self.colpali_model = colpali_model
-        self.colpali_processor = colpali_processor
         self.collection_name = collection_name
-        self._create_collection()
-        self._create_vector_storage()
-        self._update_collection()
+        try:
+            self._create_collection()
+            self._create_vector_storage()
+            self._update_collection()
+        except:
+            pass
 
     def _create_collection(self):
         """Create a collection in Qdrant with specific storage configurations."""
@@ -81,12 +95,13 @@ class VectorDbEngine:
                 batch = self.dataset[i:i + batch_size]
                 images = batch["image"]
 
+                # images = [scale_image(image, new_height=256) for image in images]
+
+                batch_images = processor_retrieval.process_images(images).to(model.device)
                 # Process and encode images
+                model.enable_retrieval()
                 with torch.no_grad():
-                    batch_images = self.colpali_processor.process_images(images).to(
-                        self.colpali_model.device
-                    )
-                    image_embeddings = self.colpali_model(**batch_images)
+                    image_embeddings = model.forward(**batch_images)
 
                 # Prepare points for Qdrant
                 points = []
@@ -118,10 +133,7 @@ class VectorDbEngine:
 class SearchEngine(VectorDbEngine):
     """Search engine for querying vector data from Qdrant."""
 
-    model_name = "davanstrien/finetune_colpali_v1_2-ufo-4bit"
-    processor_name = "vidore/colpaligemma-3b-pt-448-base"
-
-    def __init__(self, data: List[Dict[str, Any]], collection_name: str = "documents"):
+    def __init__(self, data: List[Dict[str, Any]], collection_name: str):
         """
         Initialize the search engine.
 
@@ -129,15 +141,31 @@ class SearchEngine(VectorDbEngine):
             data: List of data entries to be processed.
             collection_name: Name of the Qdrant collection.
         """
-        self.colpali_model = ColPali.from_pretrained(
-            self.model_name,
-            torch_dtype=torch.bfloat16,
-            device_map="cuda:0",
-        )
-        self.colpali_processor = ColPaliProcessor.from_pretrained(self.processor_name)
-        super().__init__(data, self.colpali_model, self.colpali_processor, collection_name)
 
-    def query(self, text: str) -> List[models.PointStruct]:
+        self.data = data
+
+        super().__init__(self.data, collection_name)
+
+    @staticmethod
+    def _get_conversation(image):
+        conversation = [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "image",
+                    },
+                    {
+                        "type": "text",
+                        "text": "Ответь на данный вопрос, используя изборажение: {}\n. Если информации нет - ответь: "
+                                "'Данных для ответа нет'".format(image),
+                    },
+                ],
+            }
+        ]
+        return conversation
+
+    def query(self, text: str) -> List:
         """
         Query the Qdrant collection with a text.
 
@@ -147,13 +175,13 @@ class SearchEngine(VectorDbEngine):
         Returns:
             List of points matching the query.
         """
-        with torch.no_grad():
-            batch_query = self.colpali_processor.process_queries([text]).to(
-                self.colpali_model.device
-            )
-            query_embedding = self.colpali_model(**batch_query)
 
-        multivector_query = query_embedding[0].cpu().float().numpy().tolist()
+        batch_queries = processor_retrieval.process_queries([text]).to(model.device)
+        model.enable_retrieval()
+        with torch.no_grad():
+            query_embeddings = model.forward(**batch_queries)
+
+        multivector_query = query_embeddings[0].cpu().float().numpy().tolist()
 
         start_time = time.time()
         search_result = self.qdrant_client.query_points(
@@ -174,4 +202,39 @@ class SearchEngine(VectorDbEngine):
         elapsed_time = end_time - start_time
         print(f"Search completed in {elapsed_time:.4f} seconds")
 
-        return search_result.points
+        return [self.dataset[search_point.id] for search_point in search_result.points]
+
+    def get_answer(self, text: str) -> str:
+        search_points = self.query(text)
+        conversation = self._get_conversation(text)
+        text_prompt = processor_generation.apply_chat_template(conversation, add_generation_prompt=True)
+
+        images = []
+        for image_info in search_points:
+            images.append(image_info["image"])
+            break
+
+        # images = [scale_image(image, new_height=256) for image in images]
+
+        inputs_generation = processor_generation(
+            text=[text_prompt],
+            images=images,
+            padding=True,
+            return_tensors="pt",
+        ).to(model.device)
+
+        # Generate the RAG response
+        model.enable_generation()
+        output_ids = model.generate(**inputs_generation, max_new_tokens=128)
+
+        # Ensure that only the newly generated token IDs are retained from output_ids
+        generated_ids = [output_ids[len(input_ids):] for input_ids, output_ids in
+                         zip(inputs_generation.input_ids, output_ids)]
+
+        # Decode the RAG response
+        output_text = processor_generation.batch_decode(
+            generated_ids,
+            skip_special_tokens=True,
+            clean_up_tokenization_spaces=True)
+
+        return output_text[0]

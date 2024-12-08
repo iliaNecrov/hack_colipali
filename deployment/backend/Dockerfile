@@ -9,6 +9,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /backend
 
+ENV TRANSFORMERS_CACHE ./transformers_cache
+ENV HF_HOME ./transformers_cache
+
 EXPOSE 8000
 
 CMD ["bash", "run.sh"]

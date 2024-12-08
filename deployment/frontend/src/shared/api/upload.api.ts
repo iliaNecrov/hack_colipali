@@ -1,7 +1,7 @@
 import type { RcFile } from 'antd/lib/upload';
 import { translit } from '@/shared/utils/utils.ts';
 import axios from 'axios';
-import { IFileWithInfoResponse } from '@/features/upload-file/UploadFile.tsx';
+import { IFileWithInfoResponse } from '@/features/upload-file/UploadFileComponent.tsx';
 import { api } from '@/path.ts';
 
 export const uploadFileApi = async (
@@ -14,9 +14,9 @@ export const uploadFileApi = async (
     file.append('name', name);
   }
 
-  file.append('file', data as Blob);
+  file.append('files', data as Blob);
   return (
-    await axios.post(`${api}/file`, file, {
+    await axios.post(`${api}/upload`, file, {
       headers: {
         'Content-Type': 'multipart/form-data;charset=utf-8',
       },
