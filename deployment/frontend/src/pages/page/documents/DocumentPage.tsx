@@ -114,6 +114,10 @@ const TextContainer = styled.div`
   width: 30%;
   background: var(--primary-color);
   border-radius: 10px;
+  line-height: 1;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: left;
 `;
 
 const SubHeaderWrapper = styled.div`
