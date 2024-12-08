@@ -1,10 +1,9 @@
 import io
 import base64
-import pickle
 
 from fastapi import APIRouter
 from fastapi import UploadFile
-from fastapi.responses import FileResponse
+import uuid
 
 from typing import List, Dict
 
@@ -36,7 +35,7 @@ async def upload_document(files: List[UploadFile]):
     # pickle.dump(obj=pages, file=open(PATH_TO_PAGES, "wb"))
 
     # compute embeddings from pages
-    search_engine = SearchEngine(pages, "documents")
+    search_engine = SearchEngine(pages, str(uuid.uuid4()))
 
     # upload embeddings and payloads to Qdrant
     # ...
