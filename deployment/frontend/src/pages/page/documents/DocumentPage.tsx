@@ -112,6 +112,8 @@ const TextContainer = styled.div`
   align-items: center;
   justify-content: center;
   width: 30%;
+  background: var(--primary-color);
+  border-radius: 10px;
 `;
 
 const SubHeaderWrapper = styled.div`

@@ -9,7 +9,8 @@ interface IImageWrapper {
 export const ImageWrapper = ({ elem }: IImageWrapper): ReactElement => {
   return (
     <Wrapper>
-      <StyledImage src={`data:image/png;base64,${elem?.img}`} alt="Image" />;{elem.page}
+      <StyledImage src={`data:image/png;base64,${elem?.img}`} alt="Image" />
+      <Text>{elem.page}</Text>
     </Wrapper>
   );
 };
@@ -17,7 +18,10 @@ export const ImageWrapper = ({ elem }: IImageWrapper): ReactElement => {
 const Text = styled.div`
   color: var(--text-main-color);
 `;
-const Wrapper = styled.div``;
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 const StyledImage = styled.img`
   width: 80%;
