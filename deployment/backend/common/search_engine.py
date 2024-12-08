@@ -157,7 +157,8 @@ class SearchEngine(VectorDbEngine):
                     },
                     {
                         "type": "text",
-                        "text": "Answer the following question using the input image: {}".format(image),
+                        "text": "Ответь на данный вопрос, используя изборажение: {}\n. Если информации нет - ответь: "
+                                "'Данных для ответа нет'".format(image),
                     },
                 ],
             }
@@ -213,7 +214,7 @@ class SearchEngine(VectorDbEngine):
             images.append(image_info["image"])
             break
 
-        images = [scale_image(image, new_height=256) for image in images]
+        # images = [scale_image(image, new_height=256) for image in images]
 
         inputs_generation = processor_generation(
             text=[text_prompt],
