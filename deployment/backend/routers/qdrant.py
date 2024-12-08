@@ -81,3 +81,4 @@ async def generate(query: SearchRequest) -> str:
     return search_engine.get_answer(query.query)
 
 
+

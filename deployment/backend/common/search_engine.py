@@ -236,4 +236,4 @@ class SearchEngine(VectorDbEngine):
             skip_special_tokens=True,
             clean_up_tokenization_spaces=True)
 
-        return output_text
+        return output_text[0]
