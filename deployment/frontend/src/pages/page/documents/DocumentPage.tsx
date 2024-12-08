@@ -72,7 +72,7 @@ export const DocumentPage = (): ReactElement => {
             <BaseInput
               onChange={e => setInputValue(e.target.value)}
               value={inputValue}
-              placeholder={'Введите промпт'}
+              placeholder={'Введите вопрос'}
             />
 
             <Button onClick={onButtonClick}>Отправить</Button>

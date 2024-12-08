@@ -22,7 +22,7 @@ export const MainPageInfo = (): ReactElement => {
       <Wrapper>
         <MainContainer>
           <TextContainer>
-            <TitleText>Визуализация RAG в PDFs</TitleText>
+            <TitleText>Визуализация RAG</TitleText>
             <Description>Загрузите файл</Description>
           </TextContainer>
           <SearchContainer>
